@@ -1,6 +1,6 @@
 // src/components/Cart.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { CartItem } from '../context/CartContext';
 
@@ -20,35 +20,61 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
   const costoEnvio = 8500; // Fijo por ahora
   const totalPedido = subtotalProductos + costoEnvio;
 
-  // Manejo de confirmación => abrir WhatsApp
+  // Nuevos estados
+  const [loAntesPosible, setLoAntesPosible] = useState(false);
+  const [nombreRecibe, setNombreRecibe] = useState('');
+  const [calle, setCalle] = useState('');
+  const [numero, setNumero] = useState('');
+  const [provincia, setProvincia] = useState('');
+  const [Localidad, setLocalidad] = useState('');
+  const [codigoPostal, setCodigoPostal] = useState('');
+  const [metodoPago, setMetodoPago] = useState('Mercadopago');
+
+  // Lista de provincias
+  const provinciasArgentina = [
+    'Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba',
+    'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy', 'La Pampa', 'La Rioja',
+    'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan',
+    'San Luis', 'Santa Cruz', 'Santa Fe', 'Santiago del Estero',
+    'Tierra del Fuego', 'Tucumán'
+  ];
+
+  // Validación y manejo de confirmación actualizado
   const handleConfirm = () => {
-    const nombre = 'Nombre de usuario'; // Podrías obtenerlo de un formulario
-    const metodoPago = 'Transferencia'; // Idem
-    const direccion = 'Dirección de envío'; // Idem
+    if (!nombreRecibe.trim()) {
+      alert('Por favor ingrese el nombre de quien recibe');
+      return;
+    }
+    if (!calle.trim() || !numero.trim() || !provincia || !Localidad.trim() || !codigoPostal.trim()) {
+      alert('Por favor complete todos los campos de la dirección');
+      return;
+    }
 
-    // Armar el texto
+    const direccionFinal = `${calle} ${numero}, ${Localidad}, ${provincia}, CP: ${codigoPostal}`;
+    
     const textoWhatsApp =
-    `Hola soy ${nombre} y quería:\n` +
-    cartItems
-      .map(
-        (item) => `- (${item.quantity}) ${item.title} por $${item.price * item.quantity}`
-      )
-      .join('\n') +
-    `\nPor el precio de $${subtotalProductos}\n` +
-    `Costo de envío: $${costoEnvio}\n` +
-    `Total: $${totalPedido}\n` +
-    `Para ser enviado a ${direccion}\n` +
-    `Con el método de pago ${metodoPago}\n`;
+      `Hola soy ${nombreRecibe} y quería:\n` +
+      cartItems
+        .map(
+          (item) => `- (${item.quantity}) ${item.title} por $${item.price * item.quantity}`
+        )
+        .join('\n') +
+      `\nPor el precio de $${subtotalProductos}\n` +
+      `Costo de envío: $${costoEnvio}\n` +
+      `Total: $${totalPedido}\n` +
+      `Entrega: ${loAntesPosible ? 'Lo antes posible' : 'A coordinar'}\n` +
+      `Para ser enviado a ${direccionFinal}\n` +
+      `Con el método de pago ${metodoPago}\n`;
 
-  const telefonoTienda = '+5491128973151';
-  const url = `https://wa.me/${telefonoTienda.replace('+', '')}?text=${encodeURIComponent(
-    textoWhatsApp
-  )}`;
+    const telefonoTienda = '+5491128973151';
+    const url = `https://wa.me/${telefonoTienda.replace('+', '')}?text=${encodeURIComponent(
+      textoWhatsApp
+    )}`;
 
-  window.open(url, '_blank');
-};
+    window.open(url, '_blank');
+  };
 
-return (
+  return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
         <Modal.Title>Mi Pedido</Modal.Title>
@@ -65,15 +91,86 @@ return (
         ))}
         <hr />
         <p>Forma de entrega</p>
-        <p>Lo antes posible o en una fecha y hora (no disponible aún)</p>
-        <p>Nombre del que recibe: ___________</p>
-        <p>Dirección de envío: ___________</p>
+        <div className="mb-3">
+          <input
+            type="checkbox"
+            id="loAntesPosible"
+            checked={loAntesPosible}
+            onChange={(e) => setLoAntesPosible(e.target.checked)}
+          />
+          <label htmlFor="loAntesPosible" className="ms-2">Lo antes posible</label>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Nombre de quien recibe: *</label>
+          <input
+            type="text"
+            className="form-control"
+            value={nombreRecibe}
+            onChange={(e) => setNombreRecibe(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Dirección de envío: *</label>
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Calle"
+            value={calle}
+            onChange={(e) => setCalle(e.target.value)}
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Número"
+            value={numero}
+            onChange={(e) => setNumero(e.target.value)}
+          />
+          <select
+            className="form-select mb-2"
+            value={provincia}
+            onChange={(e) => setProvincia(e.target.value)}
+          >
+            <option value="">Seleccione provincia</option>
+            {provinciasArgentina.map(prov => (
+              <option key={prov} value={prov}>{prov}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Localidad"
+            value={Localidad}
+            onChange={(e) => setLocalidad(e.target.value)}
+          />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Código Postal"
+            value={codigoPostal}
+            onChange={(e) => setCodigoPostal(e.target.value)}
+          />
+        </div>
+
         <p>Forma de pago</p>
-        <ul>
-          <li>Transferencia</li>
-          <li>Mercadopago</li>
-          <li>Tarjeta de crédito</li>
-        </ul>
+        <div className="mb-3">
+          {['Mercadopago', 'Transferencia', 'Tarjeta de crédito', 'Tarjeta de débito'].map((metodo) => (
+            <div key={metodo}>
+              <input
+                type="radio"
+                id={metodo}
+                name="metodoPago"
+                value={metodo}
+                checked={metodoPago === metodo}
+                onChange={(e) => setMetodoPago(e.target.value)}
+              />
+              <label htmlFor={metodo} className="ms-2">{metodo}</label>
+            </div>
+          ))}
+        </div>
+
         <div
           className="mt-3 p-2"
           style={{ backgroundColor: 'orange', borderRadius: '10px' }}
