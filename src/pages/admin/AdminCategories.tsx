@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { db } from '../../services/firebaseConfig.ts';
 import {
   collection,
@@ -28,18 +28,18 @@ const AdminCategories: React.FC = () => {
 
   const categoriesRef = collection(db, 'categories');
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     const snapshot = await getDocs(categoriesRef);
     const data: Category[] = snapshot.docs.map((d) => ({
       id: d.id,
       ...(d.data() as Omit<Category, 'id'>),
     }));
     setCategories(data);
-  };
+  }, [categoriesRef]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();

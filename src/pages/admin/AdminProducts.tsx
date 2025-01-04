@@ -1,5 +1,5 @@
 // src/pages/admin/AdminProducts.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { db } from '../../services/firebaseConfig.ts';
 import {
   collection,
@@ -56,14 +56,8 @@ const AdminProducts: React.FC = () => {
   const productsRef = collection(db, 'products');
   const categoriesRef = collection(db, 'categories');
 
-  /** Cargar productos y categorías al montar */
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
-
   /** (5.4) Obtener productos de Firestore */
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const snapshot = await getDocs(productsRef);
       const data: Product[] = snapshot.docs.map((d) => ({
@@ -74,10 +68,10 @@ const AdminProducts: React.FC = () => {
     } catch (error) {
       console.error('Error al obtener productos:', error);
     }
-  };
+  }, [productsRef]);
 
   /** Obtener categorías de Firestore */
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const snapshot = await getDocs(categoriesRef);
       const data: Category[] = snapshot.docs.map((d) => ({
@@ -88,7 +82,12 @@ const AdminProducts: React.FC = () => {
     } catch (error) {
       console.error('Error al obtener categorías:', error);
     }
-  };
+  }, [categoriesRef]);
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, [fetchCategories, fetchProducts]);
 
   /** (5.3) Crear o actualizar producto */
   const handleSaveProduct = async (e: React.FormEvent) => {
