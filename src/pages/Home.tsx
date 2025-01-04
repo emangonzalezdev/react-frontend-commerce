@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext.tsx';
 import FloatingCartButton from '../components/FloatingCartButton.tsx';
 import Cart from '../components/Cart.tsx';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebaseConfig.ts';
 import { JSX } from 'react/jsx-dev-runtime';
 import { ProductItemData } from '../types/ProductItemData';
@@ -33,6 +33,23 @@ interface CategoryNode extends Category {
   children: CategoryNode[];
 }
 
+// Nuevas interfaces
+interface StoreInfo {
+  name: string;
+  subtitle: string;
+  storeType: string;
+  logoURL?: string;
+  avatarURL?: string;
+  whatsapp?: string;
+  phone?: string;
+}
+
+interface DesignConfig {
+  bannerImages: { url: string; link?: string }[];
+  bannerInterval: number;
+  backgroundImage?: string;
+}
+
 const Home: React.FC = () => {
   const location = useLocation();
   const { cartItems } = useCart();
@@ -55,6 +72,8 @@ const Home: React.FC = () => {
   const [products, setProducts] = useState<ProductItemData[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
+  const [designConfig, setDesignConfig] = useState<DesignConfig | null>(null);
 
   // 1. Cargar productos
   const fetchProducts = async () => {
@@ -76,17 +95,43 @@ const Home: React.FC = () => {
     return data;
   };
 
+  // Nuevas funciones fetch
+  const fetchStoreInfo = async () => {
+    try {
+      const docRef = doc(db, 'storeInfo', 'main');
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        setStoreInfo(snap.data() as StoreInfo);
+      }
+    } catch (error) {
+      console.error('Error fetching store info:', error);
+    }
+  };
+
+  const fetchDesignConfig = async () => {
+    try {
+      const docRef = doc(db, 'storeInfo', 'designConfig');
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        setDesignConfig(snap.data() as DesignConfig);
+      }
+    } catch (error) {
+      console.error('Error fetching design config:', error);
+    }
+  };
+
   // Carga inicial (productos + categorías)
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const [prod, cat] = await Promise.all([fetchProducts(), fetchCategories()]);
         setProducts(prod);
         setCategories(cat);
+        await Promise.all([fetchStoreInfo(), fetchDesignConfig()]);
         setLoading(false);
       } catch (error) {
-        console.error('Error cargando productos/categorías:', error);
+        console.error('Error cargando datos:', error);
         setLoading(false);
       }
     })();
@@ -155,10 +200,32 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div>
-      <MyNavbar />
-      <Banner />
-      <AvatarSection />
+    <div
+      style={{
+        backgroundImage: designConfig?.backgroundImage
+          ? `url(${designConfig.backgroundImage})`
+          : undefined,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }}
+    >
+      <MyNavbar
+        storeName={storeInfo?.name}
+        logoURL={storeInfo?.logoURL}
+      />
+      <Banner
+        bannerImages={designConfig?.bannerImages || []}
+        interval={designConfig?.bannerInterval || 5}
+        storeType={storeInfo?.storeType || ''}
+      />
+      <AvatarSection
+        avatarUrl={storeInfo?.avatarURL}
+        storeName={storeInfo?.name}
+        storeSubtitle={storeInfo?.subtitle}
+        whatsapp={storeInfo?.whatsapp}
+        phone={storeInfo?.phone}
+      />
 
       <div className="container mt-3">
         {loading && <p>Cargando productos y categorías...</p>}

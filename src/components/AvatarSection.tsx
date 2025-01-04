@@ -7,12 +7,16 @@ interface AvatarSectionProps {
   avatarUrl?: string;
   storeName?: string;
   storeSubtitle?: string;
+  whatsapp?: string;
+  phone?: string;
 }
 
 const AvatarSection: React.FC<AvatarSectionProps> = ({
   avatarUrl = 'https://via.placeholder.com/150',
   storeName = 'Mi Tienda',
   storeSubtitle = 'Subtítulo o descripción',
+  whatsapp,
+  phone,
 }) => {
   const handleShare = () => {
     if (navigator.share) {
@@ -28,6 +32,25 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
     }
   };
 
+  // Manejo de clic en WhatsApp
+  const handleWhatsApp = () => {
+    if (whatsapp && whatsapp.trim() !== '') {
+      // Abrir chat con el numero
+      window.open(`https://wa.me/${whatsapp.replace(/\D/g, '')}`, '_blank');
+    } else {
+      alert('No hay número de WhatsApp configurado');
+    }
+  };
+
+  // Manejo de clic en Llamada
+  const handleCall = () => {
+    if (phone && phone.trim() !== '') {
+      window.open(`tel:${phone}`, '_self');
+    } else {
+      alert('No hay teléfono configurado');
+    }
+  };
+
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -35,17 +58,17 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
           <div className="d-flex align-items-center p-3">
             <img
               src={avatarUrl}
-              alt="Avatar"
+              alt={storeName}
               style={{ width: '80px', height: '80px', borderRadius: '50%' }}
             />
             <div className="ms-3">
               <h4>{storeName}</h4>
               <p>{storeSubtitle}</p>
               <div className="d-flex gap-2 mt-2">
-                <button className="btn btn-success btn-sm">
+                <button className="btn btn-success btn-sm" onClick={handleWhatsApp}>
                   <FaWhatsapp /> WhatsApp
                 </button>
-                <button className="btn btn-primary btn-sm">
+                <button className="btn btn-primary btn-sm" onClick={handleCall}>
                   <FaPhone /> Llamada
                 </button>
                 <button className="btn btn-secondary btn-sm" onClick={handleShare}>
