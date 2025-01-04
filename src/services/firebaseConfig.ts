@@ -4,12 +4,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBVEqQ3OpaRdzbvCVKG23qDRSr895Gv6bA",
-  authDomain: "cartatienda.firebaseapp.com",
-  projectId: "cartatienda",
-  storageBucket: "cartatienda.firebasestorage.app",
-  messagingSenderId: "582597474616",
-  appId: "1:582597474616:web:c37179ad8abf29c6c229cd"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 
