@@ -14,6 +14,20 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
   storeName = 'Mi Tienda',
   storeSubtitle = 'Subtítulo o descripción',
 }) => {
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: document.title,
+        text: '¡Mira esta tienda!',
+        url: window.location.href,
+      })
+      .then(() => console.log('Compartido con éxito'))
+      .catch((err) => console.error('Error al compartir:', err));
+    } else {
+      alert('Compartir no soportado. Copia la URL: ' + window.location.href);
+    }
+  };
+
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -34,7 +48,7 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
                 <button className="btn btn-primary btn-sm">
                   <FaPhone /> Llamada
                 </button>
-                <button className="btn btn-secondary btn-sm">
+                <button className="btn btn-secondary btn-sm" onClick={handleShare}>
                   <FaShareAlt /> Compartir
                 </button>
               </div>

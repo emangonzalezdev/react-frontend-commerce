@@ -1,7 +1,7 @@
 // src/components/Banner.tsx
 
 import React from 'react';
-import './Banner.css'; // opcional para estilos propios
+import './Banner.css';
 
 interface BannerProps {
   bannerImage?: string;

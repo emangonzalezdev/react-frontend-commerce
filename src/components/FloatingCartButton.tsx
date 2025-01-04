@@ -3,12 +3,19 @@
 import React from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
 
+import './FloatingCartButton.css';
+
 interface FloatingCartButtonProps {
   onClick: () => void;
   totalPrice: number;
+  cartCount: number;
 }
 
-const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({ onClick, totalPrice }) => {
+const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
+  onClick,
+  totalPrice,
+  cartCount,
+}) => {
   return (
     <div
       style={{
@@ -20,7 +27,12 @@ const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({ onClick, totalP
       }}
       onClick={onClick}
     >
+      {/* Aquí el círculo verde con el ícono */}
       <div
+        className={
+          // Aplica la clase "heartbeat" solo si hay productos en el carrito
+          cartCount > 0 ? 'cart-icon heartbeat' : 'cart-icon'
+        }
         style={{
           backgroundColor: 'green',
           borderRadius: '50%',
@@ -33,6 +45,8 @@ const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({ onClick, totalP
       >
         <FaShoppingCart size={24} color="#fff" />
       </div>
+      
+      {/* Debajo, el total */}
       <div
         style={{
           marginTop: '5px',
