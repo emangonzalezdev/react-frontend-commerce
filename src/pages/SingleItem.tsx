@@ -5,6 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext.tsx';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebaseConfig.ts';
+import { FaArrowLeft } from 'react-icons/fa'; // para la flecha atrás
+import './SingleItem.css'; // importar el CSS
 
 const SingleItem: React.FC = () => {
   const { id } = useParams();
@@ -52,10 +54,13 @@ const SingleItem: React.FC = () => {
         setActiveIndex((prev) => (prev + 1) % product.images.length);
       }, 3000);
 
-      // Limpieza
       return () => clearInterval(interval);
     }
   }, [product]);
+
+  const handleBack = () => {
+    navigate('/');
+  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -65,46 +70,50 @@ const SingleItem: React.FC = () => {
       title: product.title,
       price: product.price,
       quantity,
+      // Imagen para el cart
       image: product.images?.[0] || ''
     });
 
-    // Navegar a Home
     navigate('/', { state: { showCart: true } });
   };
 
   if (loading) {
-    return <p>Cargando producto...</p>;
+    return <p style={{ textAlign: 'center' }}>Cargando producto...</p>;
   }
   if (!product) {
-    return <p>Producto no encontrado</p>;
+    return <p style={{ textAlign: 'center' }}>Producto no encontrado</p>;
   }
 
-  // Si no hay imágenes, mostramos fallback
+  // Carrusel simple
   const hasImages = product.images && product.images.length > 0;
-  const currentImage = hasImages ? product.images[activeIndex] : 'https://via.placeholder.com/300';
+  const currentImage = hasImages
+    ? product.images[activeIndex]
+    : 'https://via.placeholder.com/300';
 
   return (
-    <div className="container my-4">
-      {/* Carrusel simple */}
-      <div className="text-center">
+    <div className="singleitem-container">
+      {/* Banner / Carrusel */}
+      <div className="singleitem-banner-wrapper">
+        {/* Flecha de volver arriba a la izquierda */}
+        <button className="singleitem-back-arrow" onClick={handleBack}>
+          <FaArrowLeft />
+        </button>
+
         <img
           src={currentImage}
           alt={product.title}
-          style={{ maxWidth: '300px', borderRadius: '10px' }}
+          className="singleitem-banner-image"
         />
-        {/* Opcional: indicadores de las imágenes */}
+
+        {/* Indicadores (dots) */}
         {hasImages && (
-          <div className="mt-2">
-            {product.images.map((_, idx: number) => (
+          <div className="singleitem-indicators" style={{ textAlign: 'center' }}>
+            {product.images.map((_: any, idx: number) => (
               <span
                 key={idx}
+                className="singleitem-indicator-dot"
                 style={{
-                  display: 'inline-block',
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: idx === activeIndex ? 'blue' : 'gray',
-                  marginRight: '5px',
+                  backgroundColor: idx === activeIndex ? 'blue' : 'gray'
                 }}
               />
             ))}
@@ -112,38 +121,44 @@ const SingleItem: React.FC = () => {
         )}
       </div>
 
-      <h2 className="mt-3">{product.title}</h2>
-      <h4 className="text-muted">{product.subtitle}</h4>
-      <h3 className="my-2">${product.price}</h3>
+      {/* Contenido centrado */}
+      <h2 className="singleitem-title">{product.title}</h2>
+      <h4 className="singleitem-subtitle text-muted">{product.subtitle}</h4>
+      <h3 className="singleitem-price my-2">${product.price}</h3>
 
-      <div className="d-flex align-items-center gap-3">
+      {/* Controles de cantidad */}
+      <div className="singleitem-quantity-controls">
         <button
-          className="btn btn-secondary"
+          className="singleitem-quantity-btn"
           onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
         >
           -
         </button>
         <span>{quantity}</span>
-        <button className="btn btn-secondary" onClick={() => setQuantity(quantity + 1)}>
+        <button
+          className="singleitem-quantity-btn"
+          onClick={() => setQuantity(quantity + 1)}
+        >
           +
         </button>
       </div>
 
-      <div className="my-3">
+      {/* Notas adicionales */}
+      <div className="singleitem-addnotes">
         <label>Notas adicionales</label>
         <textarea
-          className="form-control"
           placeholder="Escribe toda información adicional sobre tu pedido"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
       </div>
 
-      <div className="my-3">
+      <div className="singleitem-total">
         <strong>Total parcial: ${product.price * quantity}</strong>
       </div>
 
-      <button className="btn btn-primary" onClick={handleAddToCart}>
+      {/* Botón para agregar al pedido */}
+      <button className="singleitem-addtocart-btn" onClick={handleAddToCart}>
         Agregar al pedido
       </button>
     </div>
