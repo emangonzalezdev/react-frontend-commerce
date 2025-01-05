@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MyNavbar from '../components/Navbar.tsx';
+import MyNavbar from '../components/Navbar/Navbar.tsx';
 import Banner from '../components/Banner.tsx';
 import AvatarSection from '../components/AvatarSection.tsx';
 import ProductDropdown from '../components/ProductDropdown.tsx'; 
@@ -12,9 +12,12 @@ import { db } from '../services/firebaseConfig.ts';
 import { JSX } from 'react/jsx-dev-runtime';
 import { ProductItemData } from '../types/ProductItemData';
 
+
+import "./Home.css"
+
 interface Category {
   id: string;
-  name: string;
+  storeName: string;
   parentId?: string | null;
   description?: string;
   slug?: string;
@@ -35,7 +38,7 @@ interface CategoryNode extends Category {
 
 // Nuevas interfaces
 interface StoreInfo {
-  name: string;
+  storeName: string;
   subtitle: string;
   storeType: string;
   logoURL?: string;
@@ -173,30 +176,37 @@ const Home: React.FC = () => {
    * - Si no tiene hijos (es "hoja"), mostramos un <ProductDropdown> con sus productos.
    */
   function renderCategoryNode(node: CategoryNode, level = 0): JSX.Element {
-    const hasChildren = node.children.length > 0;
     const nodeProducts = productsByCategory[node.id] || [];
+    const isLeaf = node.children.length === 0;
 
-    // Ejemplo: si level=0 => h2, si level=1 => h3, etc. Ajusta según prefieras
-    const Tag = level === 0 ? 'h2' : 'h3';
-
-    return (
-      <div key={node.id} style={{ marginLeft: level * 20 }}>
-        {/* Mostrar el nombre de la categoría con un "heading" distinto según nivel */}
-        <Tag>{node.name}</Tag>
-
-        {/* Si la categoría es hoja (sin hijos) y hay productos, usamos <ProductDropdown> 
-            para mantener el diseño anterior (con "Pedir", avatar a la derecha, etc.). */}
-        {!hasChildren && nodeProducts.length > 0 && (
-          <ProductDropdown sectionName={node.name} products={nodeProducts} />
-        )}
-
-        {/* Si hay hijos, renderizamos cada hijo de forma recursiva */}
-        {node.children.map((childCat) => renderCategoryNode(childCat, level + 1))}
-
-        {/* Si la categoría es hoja y NO hay productos, podrías mostrar 
-            algo como "No hay productos en esta categoría" o simplemente nada. */}
-      </div>
-    );
+    // Si es nivel 0 => mostramos el nombre con <h2>
+    if (level === 0) {
+      return (
+        <div key={node.id} style={{ marginBottom: '10px' }}>
+          <h2>{node.name}</h2>
+          {/* Renderear sus hijos directamente como subcategorías */}
+          {node.children.map((child) => renderCategoryNode(child, 1))}
+        </div>
+      );
+    } else {
+      // Asumimos level === 1 => categoría hija
+      if (isLeaf && nodeProducts.length > 0) {
+        return (
+          <ProductDropdown
+            key={node.id}
+            sectionName={node.name}
+            products={nodeProducts}
+          />
+        );
+      } else {
+        // Si no es leaf, renderizamos sus children
+        return (
+          <div key={node.id}>
+            {node.children.map((child) => renderCategoryNode(child, level + 1))}
+          </div>
+        );
+      }
+    }
   }
 
   return (
@@ -205,13 +215,14 @@ const Home: React.FC = () => {
         backgroundImage: designConfig?.backgroundImage
           ? `url(${designConfig.backgroundImage})`
           : undefined,
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'auto',
+        backgroundRepeat: 'repeat',
+        backgroundAttachment: 'fixed',
         minHeight: '100vh',
       }}
     >
       <MyNavbar
-        storeName={storeInfo?.name}
+        storeName={storeInfo?.storeName}
         logoURL={storeInfo?.logoURL}
       />
       <Banner
@@ -221,7 +232,7 @@ const Home: React.FC = () => {
       />
       <AvatarSection
         avatarUrl={storeInfo?.avatarURL}
-        storeName={storeInfo?.name}
+        storeName={storeInfo?.storeName}
         storeSubtitle={storeInfo?.subtitle}
         whatsapp={storeInfo?.whatsapp}
         phone={storeInfo?.phone}

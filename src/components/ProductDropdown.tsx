@@ -1,9 +1,10 @@
 // src/components/ProductDropdown.tsx
 
 import React, { useState } from 'react';
-import { Collapse, Button } from 'react-bootstrap';
+
 import { ProductItemData } from '../types/ProductItemData';
 import ProductItem from './ProductItem.tsx';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface ProductDropdownProps {
   sectionName: string;
@@ -16,24 +17,26 @@ const ProductDropdown: React.FC<ProductDropdownProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
+  const handleToggle = () => {
+    setOpen((prev) => !prev);
+  };
+
   return (
     <div className="my-2">
-      <Button
-        variant="info"
-        onClick={() => setOpen(!open)}
-        aria-controls={`${sectionName}-collapse`}
-        aria-expanded={open}
-        className="text-white"
+      <button
+        className="product-dropdown-button"
+        onClick={handleToggle}
       >
-        {sectionName}
-      </Button>
-      <Collapse in={open}>
-        <div id={`${sectionName}-collapse`} className="mt-2">
+        <span>{sectionName}</span>
+        {open ? <FaChevronUp /> : <FaChevronDown />}
+      </button>
+      {open && (
+        <div className="product-dropdown-content">
           {products.map((product) => (
             <ProductItem key={product.id} product={product} />
           ))}
         </div>
-      </Collapse>
+      )}
     </div>
   );
 };

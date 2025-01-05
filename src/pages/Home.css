@@ -1,0 +1,40 @@
+/* src/pages/Home.css */
+.product-dropdown-button {
+    width: 100%;
+    background-color: #eee; /* gris claro */
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 10px;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  
+  .product-dropdown-content {
+    margin-left: 20px;
+    margin-top: 5px;
+  }
+  
+  .product-dropdown-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  
+  .product-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+  

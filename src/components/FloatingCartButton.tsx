@@ -23,7 +23,7 @@ const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
         bottom: '20px',
         right: '20px',
         cursor: 'pointer',
-        zIndex: 9999,
+        zIndex: 999,
       }}
       onClick={onClick}
     >

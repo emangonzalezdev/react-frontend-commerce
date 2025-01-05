@@ -35,9 +35,9 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
       </div>
       <div>
         <img
-          src={product.image}
+          src={product.images[0]}
           alt={product.title}
-          style={{ width: '60px', height: '60px', borderRadius: '10px' }}
+          style={{ width: '150px'}}
         />
       </div>
     </div>

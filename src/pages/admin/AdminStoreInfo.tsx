@@ -4,7 +4,7 @@ import { db } from '../../services/firebaseConfig.ts';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface StoreInfo {
-  name: string;
+  storeName: string;
   subtitle: string;
   seoDescription: string;
   storeType: string;
@@ -21,12 +21,12 @@ interface StoreInfo {
   avatarURL?: string;
   whatsapp?: string;
   phone?: string;
-  socialLinks?: { label: string; url: string }[]; // Ejemplo
+  socialLinks?: { label: string; url: string }[];
 }
 
 const AdminStoreInfo: React.FC = () => {
   const [storeInfo, setStoreInfo] = useState<StoreInfo>({
-    name: '',
+    storeName: '',
     subtitle: '',
     seoDescription: '',
     storeType: '',
@@ -72,7 +72,7 @@ const AdminStoreInfo: React.FC = () => {
 
         // Combinar datos existentes con valores por defecto
         setStoreInfo({
-          name: data.name ?? '',
+          storeName: data.storeName ?? '',
           subtitle: data.subtitle ?? '',
           seoDescription: data.seoDescription ?? '',
           storeType: data.storeType ?? '',
@@ -108,8 +108,8 @@ const AdminStoreInfo: React.FC = () => {
         <label>Nombre de la tienda</label>
         <input
           className="form-control"
-          value={storeInfo.name}
-          onChange={(e) => setStoreInfo({ ...storeInfo, name: e.target.value })}
+          value={storeInfo.storeName}
+          onChange={(e) => setStoreInfo({ ...storeInfo, storeName: e.target.value })}
         />
       </div>
 
@@ -215,27 +215,46 @@ const AdminStoreInfo: React.FC = () => {
       <div className="mb-3">
         <label>Redes sociales (ejemplo simplificado)</label>
         {storeInfo.socialLinks?.map((link, index) => (
-          <div key={index} className="d-flex gap-2 mb-2">
-            <input
-              className="form-control"
-              placeholder="Nombre de red (ej. Facebook)"
-              value={link.label}
-              onChange={(e) => {
-                const newLinks = [...(storeInfo.socialLinks || [])];
-                newLinks[index].label = e.target.value;
-                setStoreInfo({ ...storeInfo, socialLinks: newLinks });
-              }}
-            />
-            <input
-              className="form-control"
-              placeholder="URL"
-              value={link.url}
-              onChange={(e) => {
-                const newLinks = [...(storeInfo.socialLinks || [])];
-                newLinks[index].url = e.target.value;
-                setStoreInfo({ ...storeInfo, socialLinks: newLinks });
-              }}
-            />
+          <div key={index} className="border p-2 mb-2">
+            <div className="mb-2">
+              <label>Nombre de red (ej. "Facebook")</label>
+              <input
+                className="form-control"
+                value={link.label}
+                onChange={(e) => {
+                  const newLinks = [...(storeInfo.socialLinks || [])];
+                  newLinks[index].label = e.target.value;
+                  setStoreInfo({ ...storeInfo, socialLinks: newLinks });
+                }}
+              />
+            </div>
+
+            <div className="mb-2">
+              <label>URL</label>
+              <input
+                className="form-control"
+                value={link.url}
+                onChange={(e) => {
+                  const newLinks = [...(storeInfo.socialLinks || [])];
+                  newLinks[index].url = e.target.value;
+                  setStoreInfo({ ...storeInfo, socialLinks: newLinks });
+                }}
+              />
+            </div>
+
+            <div className="mb-2">
+              <label>Ícono (Bootstrap Icons, ej. "bi bi-facebook")</label>
+              <input
+                className="form-control"
+                value={link.icon ?? ''}
+                onChange={(e) => {
+                  const newLinks = [...(storeInfo.socialLinks || [])];
+                  newLinks[index].icon = e.target.value;
+                  setStoreInfo({ ...storeInfo, socialLinks: newLinks });
+                }}
+              />
+            </div>
+
             <button
               className="btn btn-danger"
               onClick={() => {
@@ -244,14 +263,15 @@ const AdminStoreInfo: React.FC = () => {
                 setStoreInfo({ ...storeInfo, socialLinks: newLinks });
               }}
             >
-              X
+              Eliminar
             </button>
           </div>
         ))}
         <button
           className="btn btn-secondary"
           onClick={() => {
-            const newLinks = [...(storeInfo.socialLinks || []), { label: '', url: '' }];
+            const newLinks = [...(storeInfo.socialLinks || [])];
+            newLinks.push({ label: '', url: '', icon: '' });
             setStoreInfo({ ...storeInfo, socialLinks: newLinks });
           }}
         >

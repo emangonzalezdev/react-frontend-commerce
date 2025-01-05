@@ -17,7 +17,7 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-  const costoEnvio = 8500; // Fijo por ahora
+  const costoEnvio = 0; // Fijo por ahora
   const totalPedido = subtotalProductos + costoEnvio;
 
   // Nuevos estados
@@ -60,7 +60,7 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
         )
         .join('\n') +
       `\nPor el precio de $${subtotalProductos}\n` +
-      `Costo de envío: $${costoEnvio}\n` +
+       //  `Costo de envío: $${costoEnvio}\n` +
       `Total: $${totalPedido}\n` +
       `Entrega: ${loAntesPosible ? 'Lo antes posible' : 'A coordinar'}\n` +
       `Para ser enviado a ${direccionFinal}\n` +
@@ -75,7 +75,11 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal 
+      show={show} 
+      onHide={onClose} 
+      backdropClassName="backdrop-blur"
+    >
       <Modal.Header closeButton>
         <Modal.Title>Mi Pedido</Modal.Title>
       </Modal.Header>
@@ -175,13 +179,17 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
           className="mt-3 p-2"
           style={{ backgroundColor: 'orange', borderRadius: '10px' }}
         >
-          <p>Subtotal productos: ${subtotalProductos}</p>
-          <p>Costo de envío: ${costoEnvio}</p>
+            {/*     <p>Subtotal productos: ${subtotalProductos}</p>*/}
+             {/*   <p>Costo de envío: ${costoEnvio}</p> */}
           <strong>Total del pedido: ${totalPedido}</strong>
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="light" onClick={handleConfirm}>
+        <Button 
+          variant="success" 
+          onClick={handleConfirm} 
+          style={{ width: '100%', fontWeight: 'bold', color: 'white' }}
+        >
           CONFIRMAR PEDIDO
         </Button>
       </Modal.Footer>
