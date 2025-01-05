@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Navbar, Nav, Container, Button, Modal } from 'react-bootstrap';
-import { FaFacebook, FaInstagram, FaMapMarkerAlt, FaBars } from 'react-icons/fa';
+import { FaInstagram, FaBars } from 'react-icons/fa';
 
 import './Navbar.css';
 
