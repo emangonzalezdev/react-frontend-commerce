@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { CartItem } from '../context/CartContext';
 
+import "./cart.css";
 
 interface CartProps {
     show: boolean;
@@ -81,10 +82,10 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
       backdropClassName="backdrop-blur"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Mi Pedido</Modal.Title>
+        <Modal.Title className='cart-title'>Mi Pedido</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Detalle del pedido:</p>
+        <p className='cart-divider'>Detalle del pedido</p>
         {cartItems.map((item) => (
           <div key={item.id} className="d-flex justify-content-between">
             <span>
@@ -94,7 +95,7 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
           </div>
         ))}
         <hr />
-        <p>Forma de entrega</p>
+        <p className='cart-divider'>Forma de entrega</p>
         <div className="mb-3">
           <input
             type="checkbox"
@@ -105,33 +106,10 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
           <label htmlFor="loAntesPosible" className="ms-2">Lo antes posible</label>
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">Nombre de quien recibe: *</label>
-          <input
-            type="text"
-            className="form-control"
-            value={nombreRecibe}
-            onChange={(e) => setNombreRecibe(e.target.value)}
-            required
-          />
-        </div>
 
         <div className="mb-3">
           <label className="form-label">Dirección de envío: *</label>
-          <input
-            type="text"
-            className="form-control mb-2"
-            placeholder="Calle"
-            value={calle}
-            onChange={(e) => setCalle(e.target.value)}
-          />
-          <input
-            type="text"
-            className="form-control mb-2"
-            placeholder="Número"
-            value={numero}
-            onChange={(e) => setNumero(e.target.value)}
-          />
+         
           <select
             className="form-select mb-2"
             value={provincia}
@@ -149,6 +127,20 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
             value={Localidad}
             onChange={(e) => setLocalidad(e.target.value)}
           />
+           <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Calle"
+            value={calle}
+            onChange={(e) => setCalle(e.target.value)}
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Número"
+            value={numero}
+            onChange={(e) => setNumero(e.target.value)}
+          />
           <input
             type="text"
             className="form-control"
@@ -158,9 +150,23 @@ const Cart: React.FC<CartProps> = ({ show, onClose, cartItems }) => {
           />
         </div>
 
-        <p>Forma de pago</p>
         <div className="mb-3">
-          {['Mercadopago', 'Transferencia', 'Tarjeta de crédito', 'Tarjeta de débito'].map((metodo) => (
+          <label className='cart-divider'>Nombre de quien recibe:</label>
+          <p>Nombre: *</p>
+          <input
+            type="text"
+            placeholder="ingresa tu nombre"
+            className="form-control"
+            value={nombreRecibe}
+            onChange={(e) => setNombreRecibe(e.target.value)}
+            required
+          />
+        </div>
+
+
+        <p className='cart-divider'>Forma de pago</p>
+        <div className="mb-3">
+          {['Mercadopago', 'Tarjeta débito / Crédito'].map((metodo) => (
             <div key={metodo}>
               <input
                 type="radio"

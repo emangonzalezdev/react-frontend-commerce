@@ -37,7 +37,7 @@ const MyNavbar: React.FC<MyNavbarProps> = ({ storeName, logoURL }) => {
           
               />
             ) : (
-              storeName || 'Mi Tienda'
+              storeName
             )}
           </Navbar.Brand>
 

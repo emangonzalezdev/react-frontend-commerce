@@ -43,7 +43,7 @@ const Banner: React.FC<BannerProps> = ({
           alignItems: 'center',
         }}
       >
-        <p>Sin banner</p>
+
       </div>
     );
   }

@@ -12,9 +12,13 @@ interface AvatarSectionProps {
 }
 
 const AvatarSection: React.FC<AvatarSectionProps> = ({
-  avatarUrl = 'https://via.placeholder.com/150',
-  storeName = 'Mi Tienda',
-  storeSubtitle = 'Subtítulo o descripción',
+  // avatarUrl = 'https://via.placeholder.com/150',
+  // storeName = 'Mi Tienda',
+  // storeSubtitle = 'Subtítulo o descripción',
+
+  avatarUrl = '',
+  storeName = '',
+  storeSubtitle = '',
   whatsapp,
   phone,
 }) => {
@@ -23,7 +27,7 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({
       navigator.share({
         title: document.title,
         text: '¡Mira esta tienda!',
-        url: window.location.href,
+        url: window.location.hef,
       })
       .then(() => console.log('Compartido con éxito'))
       .catch((err) => console.error('Error al compartir:', err));
