@@ -11,6 +11,7 @@ import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebaseConfig.ts';
 import { JSX } from 'react/jsx-dev-runtime';
 import { ProductItemData } from '../types/ProductItemData';
+import { Helmet } from 'react-helmet';
 
 
 import "./Home.css"
@@ -53,6 +54,23 @@ interface DesignConfig {
   backgroundImage?: string;
 }
 
+interface SEOHome {
+  titleTag: string;
+  metaDescription: string;
+  keywords?: string;
+  favicon?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogUrl?: string;
+  twitterCard?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+  canonicalUrl?: string;
+  viewport?: string;
+}
+
 const Home: React.FC = () => {
   const location = useLocation();
   const { cartItems } = useCart();
@@ -77,6 +95,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
   const [designConfig, setDesignConfig] = useState<DesignConfig | null>(null);
+  const [seoHome, setSeoHome] = useState<SEOHome | null>(null);
 
   // 1. Cargar productos
   const fetchProducts = async () => {
@@ -123,6 +142,18 @@ const Home: React.FC = () => {
     }
   };
 
+  const fetchSeoHome = async () => {
+    try {
+      const docRef = doc(db, 'storeInfo', 'seoHome');
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        setSeoHome(snap.data() as SEOHome);
+      }
+    } catch (error) {
+      console.error('Error fetching seoHome:', error);
+    }
+  };
+
   // Carga inicial (productos + categorías)
   useEffect(() => {
     (async () => {
@@ -131,7 +162,7 @@ const Home: React.FC = () => {
         const [prod, cat] = await Promise.all([fetchProducts(), fetchCategories()]);
         setProducts(prod);
         setCategories(cat);
-        await Promise.all([fetchStoreInfo(), fetchDesignConfig()]);
+        await Promise.all([fetchStoreInfo(), fetchDesignConfig(), fetchSeoHome()]);
         setLoading(false);
       } catch (error) {
         console.error('Error cargando datos:', error);
@@ -215,12 +246,30 @@ const Home: React.FC = () => {
         backgroundImage: designConfig?.backgroundImage
           ? `url(${designConfig.backgroundImage})`
           : undefined,
-        backgroundSize: 'auto',
+        backgroundSize: 'cover',
         backgroundRepeat: 'repeat',
-        backgroundAttachment: 'fixed',
         minHeight: '100vh',
       }}
     >
+      {seoHome && (
+        <Helmet>
+          <title>{seoHome.titleTag}</title>
+          <meta name="description" content={seoHome.metaDescription} />
+          <meta name="keywords" content={seoHome.keywords} />
+          <link rel="icon" href={seoHome.favicon} />
+          <meta property="og:title" content={seoHome.ogTitle} />
+          <meta property="og:description" content={seoHome.ogDescription} />
+          <meta property="og:image" content={seoHome.ogImage} />
+          <meta property="og:url" content={seoHome.ogUrl} />
+          <meta name="twitter:card" content={seoHome.twitterCard} />
+          <meta name="twitter:title" content={seoHome.twitterTitle} />
+          <meta name="twitter:description" content={seoHome.twitterDescription} />
+          <meta name="twitter:image" content={seoHome.twitterImage} />
+          <link rel="canonical" href={seoHome.canonicalUrl} />
+          <meta name="viewport" content={seoHome.viewport} />
+        </Helmet>
+      )}
+
       <MyNavbar
         storeName={storeInfo?.storeName}
         logoURL={storeInfo?.logoURL}

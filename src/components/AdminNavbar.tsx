@@ -57,6 +57,13 @@ const AdminNavbar: React.FC = () => {
                 Diseño del sitio
               </Link>
             </li>
+
+            {/* Nuevo link a SEO */}
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/seo">
+                SEO
+              </Link>
+            </li>
           </ul>
         </div>
 

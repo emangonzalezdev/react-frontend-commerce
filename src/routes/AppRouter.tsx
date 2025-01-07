@@ -10,6 +10,7 @@ import AdminStoreInfo from '../pages/admin/AdminStoreInfo.tsx';
 import AdminDesign from '../pages/admin/AdminDesign.tsx';
 import AdminCategories from '../pages/admin/AdminCategories.tsx' // <-- Importamos el componente
 import PrivateRoute from './PrivateRoute.tsx';
+import AdminSEO from '../pages/admin/AdminSEO.tsx';
 
 const AppRouter: React.FC = () => {
   return (
@@ -27,6 +28,8 @@ const AppRouter: React.FC = () => {
             <Route path="store-info" element={<AdminStoreInfo />} />
             <Route path="design" element={<AdminDesign />} />
             <Route path="categories" element={<AdminCategories />} />
+            <Route path="seo" element={<AdminSEO />} />
+         
           </Route>
         </Route>
       </Routes>

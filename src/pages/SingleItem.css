@@ -18,8 +18,15 @@
   
   .singleitem-banner-image {
     width: 100%;
-    max-height: 340px; 
-    object-fit: cover; /* para mantener proporciones */
+    height: 640px; 
+    object-fit: cover;
+  }
+  
+  @media (max-width: 768px) { /* para tabletas y escritorios */
+    .singleitem-banner-image {
+      height: 400px; /* para móviles */
+      object-fit: cover;
+    }
   }
   
   .singleitem-back-arrow {

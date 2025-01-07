@@ -7,6 +7,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebaseConfig.ts';
 import { FaArrowLeft } from 'react-icons/fa'; // para la flecha atrás
 import './SingleItem.css'; // importar el CSS
+import { Helmet } from 'react-helmet'; // Importar Helmet
+
+
 
 const SingleItem: React.FC = () => {
   const { id } = useParams();
@@ -21,6 +24,8 @@ const SingleItem: React.FC = () => {
 
   const [quantity, setQuantity] = useState<number>(1);
   const [notes, setNotes] = useState<string>('');
+
+
 
   // Buscar producto en Firestore
   const fetchProductById = async (productId: string) => {
@@ -92,6 +97,11 @@ const SingleItem: React.FC = () => {
 
   return (
     <div className="singleitem-container">
+      <Helmet>
+        <title>{product.seoTitle || `${product.title} | MiSitio`}</title>
+        <meta name="description" content={product.seoDescription || product.subtitle} />
+      </Helmet>
+      
       {/* Banner / Carrusel */}
       <div className="singleitem-banner-wrapper">
         {/* Flecha de volver arriba a la izquierda */}
