@@ -41,6 +41,7 @@ const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          marginLeft: '10px',
         }}
       >
         <FaShoppingCart size={24} color="#fff" />
@@ -49,11 +50,13 @@ const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
       {/* Debajo, el total */}
       <div
         style={{
-          marginTop: '5px',
+         
           backgroundColor: 'orange',
           borderRadius: '20px',
           textAlign: 'center',
           color: '#fff',
+          padding: '10px',
+       
         }}
       >
         ${totalPrice}
